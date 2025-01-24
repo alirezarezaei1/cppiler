@@ -28,7 +28,7 @@ def analys(term):
     while i in range(len(term)):
         if term[i] in ["(" , ")", "[", "]", "," ,";", "+", "-", "*", "/", "=" , "!" , ">", "<" , "|", "{" , "}" ] and even :
             if st != "":
-                lis.append(["unknow" , st])
+                lis.append(["unknown" , st])
             st = ""
             st = st + term[i]
             if i+1 != len(term):
@@ -50,23 +50,57 @@ def analys(term):
     if len(lis) != 0 :
         if lis[-1][0] == "symbol"and lis[-1][1] != st:
             if st != "":
-                lis.append(["unknow" , st])
+                lis.append(["unknown" , st])
     else:
-            lis.append(["unknow" , st])
+            lis.append(["unknown" , st])
 
     for i in lis :
-        if i[0] == "unknow":
+        if i[0] == "unknown":
             i[0] = type_ide(i[1])
     return lis      
+def corosheh_count(list):
+    count = 0
+    for i in list:
+        for j in i:
+            if j == "{":
+                count = count +1
+            elif j == "}":
+                count = count -1
+    return count
+def check_error(lis):
+    pass
 
-str_line  = ""
-pairs = list()
-while True:
-    str_line = input()
-    if str_line == "end":
-        break
-    temp_list = str_line.split()
-    for i in temp_list:
-        pairs = pairs + analys(i)
-for i in pairs:
-    print(f"[{i[0]}, {i[1]}]")
+def main():
+    str_line  = ""
+    line_count = 0
+    corosheh  = 0
+    is_main_called = False
+    pairs = list()
+    while True:
+        line_count = line_count + 1 
+        str_line = input()
+        temp_list = str_line.split()
+        line_pairs = list()
+        for i in temp_list:
+            pair = analys(i)
+            if ["reservedword" , "main"] in pair :
+                is_main_called = True
+            pairs = pairs + pair
+            line_pairs = line_pairs + pair
+        corosheh = corosheh_count(temp_list) + corosheh
+        if check_error(line_pairs):
+            print("syntax error on types")
+        if len(line_pairs) > 0 :
+            if line_pairs[-1] not in [["symbol", ">"],["symbol", ";"],["symbol", "}"], ["symbol" , "{"]]:
+                print("missing ;")
+                break
+        if corosheh < 0 :
+            print("syntax error unexpected \"}\"")
+            break 
+        if is_main_called and corosheh == 0:
+            break
+    for i in pairs:
+        print(f"[{i[0]}, {i[1]}]")
+
+
+main()
