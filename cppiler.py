@@ -1,3 +1,43 @@
+from hashlib import sha256
+from rich.table import Table
+from rich.console import Console
+
+def sort_pairs(pairs):
+    devided = {"string":list() ,"number":list() ,"symbol":list() ,"identifier":list() ,"reservedword":list()}
+    for pair in pairs:
+        devided[pair[0]].append(pair[1])
+    
+    for i in devided:
+        # devided[i] = list(set(devided[i]))
+        devided[i].sort()
+    print(devided)
+    return devided
+    
+
+def create_hash_table(pairs):
+
+    sorted_pairs = sort_pairs(pairs)
+    console = Console()
+    table = Table(title="Hash Table")
+    table.add_column("string", style="blue", justify="center")
+    table.add_column("number", style="blue", justify="center")
+    table.add_column("symbol", style="blue", justify="center")
+    table.add_column("identifier", style="blue", justify="center")
+    table.add_column("reservedword", style="blue", justify="center")
+    max_h = 0
+    for i in sorted_pairs:
+        max_h = max(max_h,len(sorted_pairs[i]))
+    
+    for i in range(max_h):
+        table.add_row(f"{sha256(sorted_pairs["string"][i].encode()).hexdigest() if i < len(sorted_pairs["string"]) else ""}",
+                      f"{sha256(sorted_pairs["number"][i].encode()).hexdigest() if i < len(sorted_pairs["number"]) else ""}",
+                       f"{sha256(sorted_pairs["symbol"][i].encode()).hexdigest() if i < len(sorted_pairs["symbol"]) else ""}",
+                        f"{sha256(sorted_pairs["identifier"][i].encode()).hexdigest() if i < len(sorted_pairs["identifier"]) else ""}",
+                         f"{sha256(sorted_pairs["reservedword"][i].encode()).hexdigest() if i < len(sorted_pairs["reservedword"]) else ""}" )
+        
+
+    console.print(table)
+
 def type_ide(text):
     is_int = True
     is_float = 0
@@ -101,6 +141,6 @@ def main():
             break
     for i in pairs:
         print(f"[{i[0]}, {i[1]}]")
-
+    create_hash_table(pairs)
 
 main()
