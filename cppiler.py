@@ -2,6 +2,96 @@ from hashlib import sha256
 from rich.table import Table
 from rich.console import Console
 
+def grammer():
+    grammer_dict = {
+    'Start': [['S', 'N', 'M']],
+    'S': [['#include','S'], ['ϵ']],
+    'N': [['using name space std;'], ['ϵ']],
+    'M': [['int' , 'main' , '(' , ')' , '{' , 'T' , 'V' , '}' ]],
+    'T': [['Id','T'], ['L','T'], ['Loop','T'], ['Input','T'], ['Output','T'], ['ϵ']],
+    'V': [['return','0', ';'], ['ϵ']],
+    'Id': [['int','L'], ['float','L']],
+    'L': [['identifier','Assign','Z']],
+    'Z': [[',','identifier','Assign','Z'], [';']],
+    'Operation': [['number','P'], ['identifier','P']],
+    'P': [['O','W','P'], ['ϵ']],
+    'O': [['+'],['-'], ['*']],
+    'W': [['number'], ['identifier']],
+    'Assign': [['=','Operation'], ['ϵ']],
+    'Expression': [['Operation','K','Operation']],
+    'K': [['=='], ['>='], ['<='], ['!=']],
+    'Loop': [['while','(','Expression',')','{','T','}']],
+    'Input': [['cin','>>','identifier','F'],[';']],
+    'F': [['>>','identifier','F'], ['ϵ']],
+    'Output': [['cout','<<','C','H',';']],
+    'H': [['<<','C','H'], ['ϵ']],
+    'C': [['number'], ['string'], ['identifier']],
+}
+    
+def parse_table():
+    console = Console()
+    table = Table()
+    table_row = ["","#include","using",")","}","return","int","float",";","number","identifer","+","-","*",",","==",">=","<=","!=","while","cin",">>","cout","<<","string","$"] 
+    for i in table_row:
+        table.add_column(i)
+
+    parse_table_dict = dict()
+    parse_table_dict["Start"] = ["Start" , "Start -> SNM" ]
+    table.add_row("Start" , "Start -> SNM" )
+    table.add_row("S" , "S -> #include" , "S -> ϵ" )
+    table.add_row("N" ,'', "N -> using namespace std;" , "", "" , "","N -> ϵ" )
+    table.add_row("M" ,'','','','','','M -> int main () {T V}' )
+    table.add_row("T" ,'','','', "T -> ϵ" , "T -> ϵ", "T -> Id T" , "T -> Id T","", "T -> Operation",'T -> LT','','','','','','','',"",'T -> Loop T', "T -> Input" , "", "T -> Output","","","T -> ϵ")
+    table.add_row("Id" ,'','','','','','Id -> int T', 'Id -> float L' )
+    table.add_row("Assign" ,'','','','','','','','','', 'Assign ->identifier = Operation Q' )
+    table.add_row("Operation" ,'','','','','','','','','Operation -> number P' , "Operation -> identifier P")
+    table.add_row("Expression" ,'','','','','','','','','Expresion -> Operation K Operation' , 'Expresion -> Operation K Operation' )
+    table.add_row("Loop" ,'','','','','','','','','','','','','','','','','','', 'Loop -> while(Expression){T}' )
+    table.add_row("Input",'','','','','','','','','','','','','','','','','','','','Input -> cin >> identifier F;' )
+    table.add_row("Output" ,'','','','','','','','','','','','','','','','','','','','','','Ouutput -> cout << CH;')
+    table.add_row("V" ,'','','', "V -> ϵ" , "V -> return 0;" )
+    table.add_row("L" ,'','','','','','','','','','L -> icentifier Assign Z')
+    table.add_row("Z" ,'','','','','','','','Z -> ;','','','','','','Z -> , identifier Assign Z' )
+    table.add_row("P" ,'','','P -> ϵ','','','','','','','','P -> OWP','P -> OWP','P -> OWP','P -> ϵ','P -> ϵ','P -> ϵ','P -> ϵ','P -> ϵ')
+    table.add_row("O" ,'','','','','','','','','','','O -> +','O -> -','O ->*')
+    table.add_row("W" ,'','','','','','','','', "W -> number" , "W -> identifier", "" , "")
+    table.add_row("K" ,'','','','','','','','','','','','','','', "K -> ==" , "K -> >=", "K -> <=" , "K -> !=")
+    table.add_row("F" ,'','','','','', "F -> ϵ" ,"F -> ϵ",'','' ,"F -> ϵ",'','','','','','','','' ,"F -> ϵ" ,"F -> ϵ" ,'F -> >> identifier F',"F -> ϵ" ,'','',"F -> ϵ" )
+    table.add_row("H" ,'','','','','',"H -> ϵ" ,"H -> ϵ",'','' ,"H -> ϵ" ,"" ,'','','','','','','',"H -> ϵ" ,"H -> ϵ",'',"H -> ϵ" ,"H -> << CH" ,'',"H -> ϵ" )
+    table.add_row("C" ,'','','','','','','','', "C -> numver" , "C -> identifier",'','','','','','','','','','','','','', "C -> string" , "" )
+    console.print(table)
+    parse_table_dict["Start"] = ["Start" , "Start -> SNM" ]
+    parse_table_dict["S"] = ["S" , "S -> #include" , "S -> ϵ" ]
+    parse_table_dict["N"] = ["N" ,'', "N -> using namespace std;" , "", "" , "","N -> ϵ" ]
+    parse_table_dict["M"] = ["M" ,'','','','','','M -> int main () {T V}' ]
+    parse_table_dict["T"] = ["T" ,'','','', "T -> ϵ" , "T -> ϵ", "T -> Id T" , "T -> Id T","", "T -> Operation",'T -> LT','','','','','','','',"",'T -> Loop T', "T -> Input" , "", "T -> Output","","","T -> ϵ"]
+    parse_table_dict["Id"] = ["Id" ,'','','','','','Id -> int T', 'Id -> float L' ]
+    parse_table_dict["Assign"] = ["Assign" ,'','','','','','','','','', 'Assign ->identifier = Operation Q' ]
+    parse_table_dict["Operation"] = ["Operation" ,'','','','','','','','','Operation -> number P' , "Operation -> identifier P"]
+    parse_table_dict["Expression"] = ["Expression" ,'','','','','','','','','Expresion -> Operation K Operation' , 'Expresion -> Operation K Operation' ]
+    parse_table_dict["Loop"] = ["Loop" ,'','','','','','','','','','','','','','','','','','', 'Loop -> while(Expression){T}' ]
+    parse_table_dict["Input"] = ["Input",'','','','','','','','','','','','','','','','','','','','Input -> cin >> identifier F;' ]
+    parse_table_dict["Output"] = ["Output" ,'','','','','','','','','','','','','','','','','','','','','','Ouutput -> cout << CH;']
+    parse_table_dict["V"] = ["V" ,'','','', "V -> ϵ" , "V -> return 0;" ]
+    parse_table_dict["L"] = ["L" ,'','','','','','','','','','L -> icentifier Assign Z']
+    parse_table_dict["Z"] = ["Z" ,'','','','','','','','Z -> ;','','','','','','Z -> , identifier Assign Z' ]
+    parse_table_dict["P"] = ["P" ,'','','P -> ϵ','','','','','','','','P -> OWP','P -> OWP','P -> OWP','P -> ϵ','P -> ϵ','P -> ϵ','P -> ϵ','P -> ϵ']
+    parse_table_dict["O"] = ["O" ,'','','','','','','','','','','O -> +','O -> -','O ->*']
+    parse_table_dict["W"] = ["W" ,'','','','','','','','', "W -> number" , "W -> identifier", "" , ""]
+    parse_table_dict["K"] = ["K" ,'','','','','','','','','','','','','','', "K -> ==" , "K -> >=", "K -> <=" , "K -> !="]
+    parse_table_dict["F"] = ["F" ,'','','','','', "F -> ϵ" ,"F -> ϵ",'','' ,"F -> ϵ",'','','','','','','','' ,"F -> ϵ" ,"F -> ϵ" ,'F -> >> identifier F',"F -> ϵ" ,'','',"F -> ϵ" ]
+    parse_table_dict["H"] = ["H" ,'','','','','',"H -> ϵ" ,"H -> ϵ",'','' ,"H -> ϵ" ,"" ,'','','','','','','',"H -> ϵ" ,"H -> ϵ",'',"H -> ϵ" ,"H -> << CH" ,'',"H -> ϵ" ]
+    parse_table_dict["C"] = ["C" ,'','','','','','','','', "C -> numver" , "C -> identifier",'','','','','','','','','','','','','', "C -> string" , "" ]
+
+    for i in parse_table_dict:
+        for j in range(25-len(parse_table_dict[i])):
+            parse_table_dict[i].append("")
+    for i in parse_table_dict:
+        print(parse_table_dict[i])
+    return parse_table_dict
+    
+    
+
 def sort_pairs(pairs):
     devided = {"string":list() ,"number":list() ,"symbol":list() ,"identifier":list() ,"reservedword":list()}
     for pair in pairs:
@@ -143,4 +233,5 @@ def main():
         print(f"[{i[0]}, {i[1]}]")
     create_hash_table(pairs)
 
-main()
+# main()
+parse_table()
