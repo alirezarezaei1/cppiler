@@ -2,7 +2,6 @@ from hashlib import sha256
 from rich.table import Table
 from rich.console import Console
 import anytree
-from collections import defaultdict
 
 
 def type_ide(text):
