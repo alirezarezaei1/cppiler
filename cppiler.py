@@ -2,6 +2,8 @@
 from hashlib import sha256
 from rich.table import Table
 from rich.console import Console
+import anytree
+from collections import defaultdict
 
 def grammer():
     grammer_dict = {
@@ -213,6 +215,8 @@ def check_error(lis):
 def compile(pairs, grammer):
     table_row = ["#include","usingnamespacestd",")","}","return","int","float",";","number","identifier","+","-","*",",","==",">=","<=","!=","while","cin",">>","cout","<<","string","$","="] 
     stack = list()
+    lis = list()
+    all_grammer = list()
     stack.append('$')
     stack.append("Start")
     head = stack.pop()
@@ -225,6 +229,9 @@ def compile(pairs, grammer):
         elif pairs[count][1] == head or (head =="identifier" and pairs[count][0] == "identifier") or (head == "number" and pairs[count][0] == "number")or (pairs[count][0] == "string" and head == "string"):
             
             # if not  (head =="identifier" and pairs[count][0] == "identifier") and stack[-1] !="Assign":
+            if head in ["identifier" , "number", "string"]:
+                lis.append(pairs[count][1])
+                print("????????????????????????????????????????????????????????????????????????????????????",pairs[count][1])
             count =  count +1
             print("normal pop :" , head)
             head = stack.pop()
@@ -240,13 +247,80 @@ def compile(pairs, grammer):
             temp_head = head
             if (temp_head != "ϵ"or temp_head != "") and (temp[num] !=""):
                 # head = stack.pop()
+                all_grammer.append(temp[num])
                 print("transition: ", temp[num])
                 for i in range(len(temp[num][temp_head])-1 ,-1, -1):
                     stack.append(temp[num][temp_head][i])
                 head = stack.pop()
+    output_tree(all_grammer,lis)
+    # return all_grammer
+
+def spliter(str):
+    lis = list()
+    temp_lis =list()
+    flag = False
+    for i in str:
+        if flag and i == " ":
+            temp_lis.append(i)
+        elif flag and (i=="\'" or i == "\""):
+            temp_lis.append(i)
+            lis.append("".join(temp_lis))
+            temp_lis = list()
+            flag = False
+        elif (i=="\'" or i == "\""):
+            temp_lis.append(i)
+            flag = True
+        elif i ==" ":
+            lis.append("".join(temp_lis))
+            temp_lis = list()
+        else:
+            temp_lis.append(i)
+    if len(lis) >0:
+        if "".join(temp_lis) != lis[-1]:
+            lis.append("".join(temp_lis))
+    elif "".join(temp_lis) != "":
+            lis.append("".join(temp_lis))
+    print(lis)
+    return lis
+
+def output_tree (all_grammer , lis) :
+    console = Console()
+    root = anytree.Node("Start", color = "blue")
+    stack = list()
+    stack.append(root)
+    grammer_count = 0
+    k=0
+    while len(stack) > 0 :
+        head = stack.pop()
+        temp = list(all_grammer[grammer_count].values())
+        temp2 = list()
+        print(temp[0])
+        for j in temp[0]:
+            if j  in ["Start" , "S" , "N" , "M" , "T" , "Loop","Id" , "Assign" , "Operation" , "Expression" , "Input" , "Output" , "V" , "L" , "Z" , "P", "O","W", "K", "F" , "H" , 'C','ϵ',"identifier" , "number", "string"]:
+                i = anytree.Node(name = j, parent=head, color = "blue")
+            else:
+                i = anytree.Node(name = j, parent=head, color = "black")
+            temp2.append(i)
+        temp2.reverse()
+        for j in temp2:
+            # print(j)
+            if j.name in["identifier" , "number", "string"]:
+                i = anytree.Node(name = lis[k], parent=j, color = "black")
+                k = k+1
+            if j.name  in ["Start" , "S" , "N" , "M" , "T" , "Id" , "Assign" , "Operation" , "Expression" , "Input" , "Output" , "V" , "Loop","L" , "Z" , "P", "O","W", "K", "F" , "H" , "C"]:
+                # print("done ")
+                stack.append(j)
+        grammer_count += 1     
+        if(grammer_count) == len(all_grammer):
+            break           
+    for pre, fill, node in anytree.RenderTree(root):
+        if node.color =="blue":
+            console.print(f"{pre}{node.name} ")
+        else:
+            console.print(f"{pre}[bold red]{node.name}[/bold red] ")
+        # console.print(root)
 
 
-                
 
         
     
@@ -262,7 +336,7 @@ def main():
     while True:
         line_count = line_count + 1 
         str_line = input()
-        temp_list = str_line.split()
+        temp_list = spliter(str_line)
         line_pairs = list()
         for i in temp_list:
             pair = analys(i)
@@ -285,17 +359,32 @@ def main():
     for i in pairs:
         print(f"[{i[0]}, {i[1]}]")
     create_hash_table(pairs)
-    return pairs
+    final_pairs = list()
+    flag = False
+    for pair in pairs:
+        if flag:
+            flag= False
+        elif pair[1] == "using":
+            final_pairs.append([pair[0],"usingnamespacestd"])
+        elif pair[1] not in["namespace" , "<" , ">" , "std" ,"iostream"]:
+            final_pairs.append(pair)
+
+        if pair[1] == "std":
+            flag = True
+    return final_pairs
 
 
 m = main()
 p = parse_table()
 compile(m , p)
 
+
 ####   #include usingnamespacestd int main(){ }   ###
 
 """
-#include usingnamespacestd int main(){
+#include <iostream>
+using namespace std;
+int main(){
 int x;
 int s=0, t=10;
 while (t >= 0){
@@ -303,7 +392,7 @@ cin>>x;
 t = t - 1;
 s = s + x;
 }
-cout<<"sum="<<s;
+cout<<"sfdsfsdf dsf  um="<<s;
 return 0;
 }
 """
