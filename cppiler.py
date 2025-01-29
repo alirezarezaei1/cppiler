@@ -2,6 +2,7 @@ from hashlib import sha256
 from rich.table import Table
 from rich.console import Console
 import anytree
+from collections import defaultdict
 
 
 def type_ide(text):
@@ -195,7 +196,7 @@ def lexical_analyzer():
         print(f"[{i[0]}, {i[1]}]")
     for i in range(len(pairs)):
         if pairs[i][0] == "floatNumber":
-            removing_floatNumber[i] = ["number" , pairs[i][1]]
+            removing_floatNumber.append(["number" , pairs[i][1]])
         else:
             removing_floatNumber.append([pairs[i][0], pairs[i][1]])
     pairs = removing_floatNumber
@@ -484,9 +485,10 @@ def Nonreⅽursive_Preⅾiⅽtive_Parse_finder(pairs, grammer):
             num = -1
             for i in range(len(table_row)):
                 if pairs[count][1] == table_row[i] or( pairs[count][0] == "identifier" and table_row[i] =="identifier") or (pairs[count][0] == "number" and table_row[i] == "number")or (pairs[count][0] == "string" and table_row[i] == "string"):
-                    if temp[i] !="":
-                        num = i
-                        break
+                    if temp:
+                           if temp[i] !="":
+                                num = i
+                                break
             if num == -1:
                 return False , False
             temp_head = head
@@ -531,13 +533,13 @@ main()
 using namespace std;
 int main(){
 int x;
-int s=0, t=10;
+float s=0.0, t=10.2;
 while (t >= 0){
 cin>>x;
 t = t - 1;
 s = s + x;
 }
 cout<<"sfdsfsdf dsf  um="<<s;
-return 0;
+return 0 p ;
 }
 """
